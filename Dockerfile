@@ -1,15 +1,25 @@
-# Use an ARMv6-compatible base image
-FROM arm32v6/alpine:latest
+# Use an ARMv8-A compatible base image
+FROM arm64v8/alpine:latest
 
 # Install dependencies
 RUN apk add --no-cache \
+    build-base \
+    git \
+    cmake \
     python3 \
     py3-pip \
-    bash
+    bash \
+    make \
+    gcc \
+    g++
 
-# Copy the prebuilt asn1scc binary
-COPY asn1scc /usr/local/bin/asn1scc
-RUN chmod +x /usr/local/bin/asn1scc
+# Clone and build asn1scc
+RUN git clone https://github.com/ttsiodras/asn1scc.git /asn1scc
+WORKDIR /asn1scc
+RUN mkdir build && cd build && cmake .. && make
+
+# Add asn1scc to PATH
+ENV PATH="/asn1scc/build:${PATH}"
 
 # Set the working directory
 WORKDIR /app
