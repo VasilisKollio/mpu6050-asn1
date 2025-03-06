@@ -1,6 +1,12 @@
 # Use an ARMv8-A compatible base image
 FROM arm64v8/ubuntu:22.04 AS build
 
+# Set the time zone non-interactively
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -fs /usr/share/zoneinfo/Europe/Athens /etc/localtime \
+    && dpkg-reconfigure --frontend noninteractive tzdata
+    
 # Install dependencies
 RUN set -xe \
     && DEBIAN_FRONTEND=noninteractive apt-get update -y \
