@@ -50,21 +50,14 @@ RUN curl -s "https://get.sdkman.io" | bash \
 # Verify SDKMAN installation
 RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk version"
 
-# Install GNAT for ARM64
-# WORKDIR /gnat_tmp/
-# RUN wget -O gnat-2021-arm64-linux-bin.tar.gz https://community.download.adacore.com/v1/<gnat-arm64-download-link> \
-#    && tar -xzf gnat-2021-arm64-linux-bin.tar.gz \
-#    && git clone https://github.com/AdaCore/gnat_community_install_script.git \
-#    && chmod +x gnat_community_install_script/install_package.sh \
-#    && chmod +x gnat-2021-arm64-linux-bin/doinstall.sh \
-#    && gnat_community_install_script/install_package.sh ./gnat-2021-arm64-linux-bin /opt/GNAT/gnat-arm64-2021 \
-#    && cd \
-#    && rm -rf /gnat_tmp/ \
-#    && sed -i 's/# alias l=/alias l=/' ~/.bashrc \
-#    && sed -i 's/# export LS_OPTIONS/export LS_OPTIONS/' ~/.bashrc
+# Copy the asn1scc binary into the image
+COPY asn1scc /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
-# Set up environment variables
-# ENV PATH="/opt/GNAT/gnat-arm64-2021/bin:${PATH}"
+# Make the asn1scc binary executable
+RUN chmod +x /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
+
+# Add asn1scc to PATH
+ENV PATH="/root/asn1scc/asn1scc/bin/Debug/net7.0:${PATH}"
 
 # Set the working directory
 WORKDIR /app
@@ -74,7 +67,7 @@ COPY sensor_data.asn /app/
 COPY mpu6050_asn1.py /app/
 
 # Generate C code from the ASN.1 schema
-RUN asn1scc -c -uPER sensor_data.asn
+RUN asn1scc -c -uPER -o /app/generated /app/sensor_data.asn
 
 # Install Python dependencies for the MPU6050 script
 RUN pip3 install smbus2 asn1tools
