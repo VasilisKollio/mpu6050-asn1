@@ -51,16 +51,13 @@ RUN curl -s "https://get.sdkman.io" | bash \
 RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk version"
 
 # Copy the asn1scc binary into the image
-COPY asn1scc /usr/local/bin/asn1scc
+COPY asn1scc /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
 # Make the asn1scc binary executable
-RUN chmod +x /usr/local/bin/asn1scc
+RUN chmod +x /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
 # Verify the asn1scc binary
-RUN ls -l /usr/local/bin/asn1scc
-
-# Add asn1scc to PATH
-ENV PATH="/usr/local/bin:${PATH}"
+RUN ls -l /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
 # Set the working directory
 WORKDIR /app
@@ -69,8 +66,8 @@ WORKDIR /app
 COPY sensor_data.asn /app/
 COPY mpu6050_asn1.py /app/
 
-# Generate C code from the ASN.1 schema
-RUN asn1scc -c -uPER -o /app/generated /app/sensor_data.asn
+# Generate C code from the ASN.1 schema using the full path to asn1scc
+RUN /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc -c -uPER -o /app/generated /app/sensor_data.asn
 
 # Install Python dependencies for the MPU6050 script
 RUN pip3 install smbus2 asn1tools
