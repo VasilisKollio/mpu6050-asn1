@@ -51,7 +51,7 @@ RUN curl -s "https://get.sdkman.io" | bash \
 RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk version"
 
 # Copy the asn1scc binary into the image
-COPY mpu6050-asn1/asn1scc /usr/local/bin/asn1scc
+COPY asn1scc /usr/local/bin/asn1scc
 
 # Make the asn1scc binary executable
 RUN chmod +x /usr/local/bin/asn1scc
@@ -66,8 +66,8 @@ ENV PATH="/usr/local/bin:${PATH}"
 WORKDIR /app
 
 # Copy the ASN.1 schema and Python script
-COPY mpu6050-asn1/sensor_data.asn /app/
-COPY mpu6050-asn1/mpu6050_asn1.py /app/
+COPY sensor_data.asn /app/
+COPY mpu6050_asn1.py /app/
 
 # Generate C code from the ASN.1 schema
 RUN asn1scc -c -uPER -o /app/generated /app/sensor_data.asn
