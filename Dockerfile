@@ -7,7 +7,11 @@ RUN apk add --no-cache \
     git \
     cmake \
     python3 \
-    py3-pip
+    py3-pip \
+    bash \
+    make \
+    gcc \
+    g++
 
 # Clone and build asn1scc
 RUN git clone https://github.com/ttsiodras/asn1scc.git /asn1scc
