@@ -42,12 +42,13 @@ RUN wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.
 ENV PATH="/root/.dotnet:${PATH}"
 
 # Install Scala and Java for ARM64
-RUN curl -s "https://get.sdkman.io" | bash \
+
+    RUN curl -s "https://get.sdkman.io" | bash \
     && chmod a+x "$HOME/.sdkman/bin/sdkman-init.sh" \
-    && source "$HOME/.sdkman/bin/sdkman-init.sh" \
-    && sdk install java 17.0.9-oracle \
-    && sdk install scala 3.3.0 \
-    && sdk install sbt 1.9.0
+    && bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install java 17.0.9-oracle && sdk install scala 3.3.0 && sdk install sbt 1.9.0"
+
+# Verify Previous Installation
+RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk version"
 
 # Install GNAT for ARM64
 WORKDIR /gnat_tmp/
