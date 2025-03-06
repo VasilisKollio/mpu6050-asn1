@@ -1,0 +1,17 @@
+SENSOR-DATA DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+SensorData ::= SEQUENCE {
+    timestamp      INTEGER,          -- Unix timestamp
+    accelerometer  SEQUENCE {
+        x         INTEGER,           -- Accelerometer X-axis
+        y         INTEGER,           -- Accelerometer Y-axis
+        z         INTEGER            -- Accelerometer Z-axis
+    },
+    gyroscope      SEQUENCE {
+        x         INTEGER,           -- Gyroscope X-axis
+        y         INTEGER,           -- Gyroscope Y-axis
+        z         INTEGER            -- Gyroscope Z-axis
+    }
+}
+
+END
