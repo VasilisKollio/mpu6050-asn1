@@ -51,20 +51,20 @@ RUN curl -s "https://get.sdkman.io" | bash \
 RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk version"
 
 # Install GNAT for ARM64
-WORKDIR /gnat_tmp/
-RUN wget -O gnat-2021-arm64-linux-bin.tar.gz https://community.download.adacore.com/v1/<gnat-arm64-download-link> \
-    && tar -xzf gnat-2021-arm64-linux-bin.tar.gz \
-    && git clone https://github.com/AdaCore/gnat_community_install_script.git \
-    && chmod +x gnat_community_install_script/install_package.sh \
-    && chmod +x gnat-2021-arm64-linux-bin/doinstall.sh \
-    && gnat_community_install_script/install_package.sh ./gnat-2021-arm64-linux-bin /opt/GNAT/gnat-arm64-2021 \
-    && cd \
-    && rm -rf /gnat_tmp/ \
-    && sed -i 's/# alias l=/alias l=/' ~/.bashrc \
-    && sed -i 's/# export LS_OPTIONS/export LS_OPTIONS/' ~/.bashrc
+# WORKDIR /gnat_tmp/
+# RUN wget -O gnat-2021-arm64-linux-bin.tar.gz https://community.download.adacore.com/v1/<gnat-arm64-download-link> \
+#    && tar -xzf gnat-2021-arm64-linux-bin.tar.gz \
+#    && git clone https://github.com/AdaCore/gnat_community_install_script.git \
+#    && chmod +x gnat_community_install_script/install_package.sh \
+#    && chmod +x gnat-2021-arm64-linux-bin/doinstall.sh \
+#    && gnat_community_install_script/install_package.sh ./gnat-2021-arm64-linux-bin /opt/GNAT/gnat-arm64-2021 \
+#    && cd \
+#    && rm -rf /gnat_tmp/ \
+#    && sed -i 's/# alias l=/alias l=/' ~/.bashrc \
+#    && sed -i 's/# export LS_OPTIONS/export LS_OPTIONS/' ~/.bashrc
 
 # Set up environment variables
-ENV PATH="/opt/GNAT/gnat-arm64-2021/bin:${PATH}"
+# ENV PATH="/opt/GNAT/gnat-arm64-2021/bin:${PATH}"
 
 # Set the working directory
 WORKDIR /app
