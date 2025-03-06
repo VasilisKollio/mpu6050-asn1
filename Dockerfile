@@ -64,4 +64,20 @@ RUN wget -O gnat-2021-arm64-linux-bin.tar.gz https://community.download.adacore.
     && sed -i 's/# export LS_OPTIONS/export LS_OPTIONS/' ~/.bashrc
 
 # Set up environment variables
-ENV PATH="/opt
+ENV PATH="/opt/GNAT/gnat-arm64-2021/bin:${PATH}"
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the ASN.1 schema and Python script
+COPY sensor_data.asn /app/
+COPY mpu6050_asn1.py /app/
+
+# Generate C code from the ASN.1 schema
+RUN asn1scc -c -uPER sensor_data.asn
+
+# Install Python dependencies for the MPU6050 script
+RUN pip3 install smbus2 asn1tools
+
+# Run the application
+CMD ["python3", "mpu6050_asn1.py"]
