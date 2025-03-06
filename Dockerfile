@@ -56,6 +56,9 @@ COPY asn1scc /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 # Make the asn1scc binary executable
 RUN chmod +x /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
+# Verify the asn1scc binary
+RUN ls -l /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
+
 # Add asn1scc to PATH
 ENV PATH="/root/asn1scc/asn1scc/bin/Debug/net7.0:${PATH}"
 
