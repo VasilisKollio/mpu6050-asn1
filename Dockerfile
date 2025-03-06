@@ -53,6 +53,9 @@ RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk version"
 # Copy the asn1scc binary into the image
 COPY asn1scc /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
+# Add asn1scc to PATH
+ENV PATH="/root/asn1scc/asn1scc/bin/Debug/net7.0:${PATH}"
+
 # Make the asn1scc binary executable
 RUN chmod +x /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
@@ -60,7 +63,7 @@ RUN chmod +x /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 RUN ls -l /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
 # Add asn1scc to PATH
-ENV PATH="/root/asn1scc/asn1scc/bin/Debug/net7.0:${PATH}"
+# ENV PATH="/root/asn1scc/asn1scc/bin/Debug/net7.0:${PATH}"
 
 # Set the working directory
 WORKDIR /app
