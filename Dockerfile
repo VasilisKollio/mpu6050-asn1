@@ -30,6 +30,7 @@ RUN set -xe \
         unzip \
         zip \
         bash \
+        git \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get purge --auto-remove \
     && apt-get clean
@@ -50,14 +51,15 @@ RUN curl -s "https://get.sdkman.io" | bash \
 # Verify SDKMAN installation
 RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk version"
 
-# Copy the asn1scc binary into the image
-COPY asn1scc /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
-
-# Make the asn1scc binary executable
-RUN chmod +x /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
+# Clone and build asn1scc
+WORKDIR /root
+RUN git clone https://github.com/maxime-esa/asn1scc.git
+WORKDIR /root/asn1scc
+RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && dotnet build -c Debug"
 
 # Verify the asn1scc binary
 RUN ls -l /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
+RUN chmod +x /root/asn1scc/asn1scc/bin/Debug/net7.0/asn1scc
 
 # Set the working directory
 WORKDIR /app
