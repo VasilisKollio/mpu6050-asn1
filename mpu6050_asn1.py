@@ -69,4 +69,39 @@ def get_gyro_data():
     return gyro_x, gyro_y, gyro_z
 
 def main():
-    while True
+    while True:
+        try:
+            # Read sensor data
+            accel_x, accel_y, accel_z = get_accel_data()
+            gyro_x, gyro_y, gyro_z = get_gyro_data()
+
+            # Create ASN.1 structure
+            sensor_data = {
+                'timestamp': int(time.time()),
+                'accelerometer': {
+                    'x': accel_x,
+                    'y': accel_y,
+                    'z': accel_z
+                },
+                'gyroscope': {
+                    'x': gyro_x,
+                    'y': gyro_y,
+                    'z': gyro_z
+                }
+            }
+
+            # Encode to ASN.1 (uPER)
+            encoded = asn1.encode('SensorData', sensor_data)
+            print(f"Encoded Data: {encoded.hex()}")
+
+            time.sleep(1)  # Delay between readings
+
+        except KeyboardInterrupt:
+            logging.info("Exiting program.")
+            break
+        except Exception as e:
+            logging.error(f"An error occurred: {e}")
+            time.sleep(1)  # Wait before retrying
+
+if __name__ == "__main__":
+    main()
