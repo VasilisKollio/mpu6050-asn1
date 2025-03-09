@@ -16,10 +16,10 @@ WORKDIR /app
 
 # Copy your application files
 COPY sensor_data.asn /app/
-COPY mpu6050_asn1.py /app/
+COPY mpu6050_csv_data.py /app/
 
 # Install Python dependencies
 RUN pip3 install smbus2 asn1tools
 
 # Run the application
-CMD ["python3", "mpu6050_asn1.py"]
+CMD ["python3", "mpu6050_csv_data.py"]
