@@ -77,8 +77,10 @@ def main():
         # Wait for 1 second before the next reading
         time.sleep(1)
 
+    # Generate a unique filename based on the current timestamp
+    csv_filename = f"sensor_data_{int(time.time())}.csv"
+
     # Save the data to a CSV file
-    csv_filename = "sensor_data.csv"
     with open(csv_filename, mode='w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=sensor_data.keys())
         writer.writeheader()
