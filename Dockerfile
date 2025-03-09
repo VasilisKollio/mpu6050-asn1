@@ -10,26 +10,25 @@ RUN apt-get update && apt-get install -y tzdata \
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
-    wget \
-    unzip \
-    mono-runtime \
-    libmono-system-core4.0-cil \
-    libmono-system-numerics4.0-cil \
-    libmono-system-xml-linq4.0-cil \
-    libicu-dev \
+    git \
+    mono-complete \
+    fsharp \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+WORKDIR /opt
 
-# Download pre-built ASN1SCC compiler from the ESA GitLab repository
-RUN wget https://gitlab.com/taste-official/asn1scc/-/releases/5.0.0/downloads/asn1scc-5.0.0-Linux-x86_64.zip && \
-    unzip asn1scc-5.0.0-Linux-x86_64.zip -d /opt/asn1scc && \
-    chmod +x /opt/asn1scc/asn1.exe && \
-    rm asn1scc-5.0.0-Linux-x86_64.zip
+# Clone the asn1scc repository from GitHub
+RUN git clone https://github.com/esa/asn1scc.git
+WORKDIR /opt/asn1scc
+
+# Build asn1scc with Mono
+RUN fsharpc -o:asn1.exe Frontend/Main.fs
 
 # Create a wrapper script for asn1scc
 RUN echo '#!/bin/bash\nmono /opt/asn1scc/asn1.exe "$@"' > /usr/local/bin/asn1scc && \
     chmod +x /usr/local/bin/asn1scc
+
+WORKDIR /app
 
 # Copy your application files
 COPY sensor_data.asn /app/
