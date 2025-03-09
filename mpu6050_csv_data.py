@@ -2,6 +2,7 @@ import smbus2
 import time
 import asn1tools
 import csv
+import os
 
 # Load ASN.1 schema
 asn1 = asn1tools.compile_files('sensor_data.asn')
@@ -77,8 +78,11 @@ def main():
         # Wait for 1 second before the next reading
         time.sleep(1)
 
+    # Create the output directory if it doesn't exist
+    os.makedirs("/app/output", exist_ok=True)
+
     # Generate a unique filename based on the current timestamp
-    csv_filename = f"sensor_data_{int(time.time())}.csv"
+    csv_filename = f"/app/output/sensor_data_{int(time.time())}.csv"
 
     # Save the data to a CSV file
     with open(csv_filename, mode='w', newline='') as file:
