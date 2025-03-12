@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     mono-complete \  # ASN1SCC requires Mono for C# support
-    && rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 # Clone the ASN1SCC repository
 RUN git clone https://github.com/esa/asn1scc.git /opt/asn1scc
