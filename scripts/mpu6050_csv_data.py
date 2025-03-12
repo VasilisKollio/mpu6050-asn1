@@ -1,11 +1,7 @@
 import smbus2
 import time
-import asn1tools
 import csv
 import os
-
-# Load ASN.1 schema
-asn1 = asn1tools.compile_files('sensor_data.asn')
 
 # MPU6050 Registers
 PWR_MGMT_1 = 0x6B
@@ -44,51 +40,32 @@ def get_gyro_data():
     return gyro_x, gyro_y, gyro_z
 
 def main():
-    # List to store sensor data
-    sensor_data_list = []
-
     # Set the duration for data collection (30 seconds)
     duration = 30  # seconds
     start_time = time.time()
 
     print(f"Collecting data for {duration} seconds...")
 
-    while time.time() - start_time < duration:
-        # Read sensor data
-        accel_x, accel_y, accel_z = get_accel_data()
-        gyro_x, gyro_y, gyro_z = get_gyro_data()
-
-        # Create a dictionary for the current reading
-        sensor_data = {
-            'timestamp': int(time.time()),
-            'accel_x': accel_x,
-            'accel_y': accel_y,
-            'accel_z': accel_z,
-            'gyro_x': gyro_x,
-            'gyro_y': gyro_y,
-            'gyro_z': gyro_z
-        }
-
-        # Append the data to the list
-        sensor_data_list.append(sensor_data)
-
-        # Print the current reading
-        print(f"Data collected: {sensor_data}")
-
-        # Wait for 1 second before the next reading
-        time.sleep(1)
-
     # Create the output directory if it doesn't exist
-    os.makedirs("/app/output", exist_ok=True)
+    os.makedirs("data/output", exist_ok=True)
 
     # Generate a unique filename based on the current timestamp
-    csv_filename = f"/app/output/sensor_data_{int(time.time())}.csv"
+    csv_filename = f"data/output/sensor_data_{int(time.time())}.csv"
 
-    # Save the data to a CSV file
     with open(csv_filename, mode='w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=sensor_data.keys())
-        writer.writeheader()
-        writer.writerows(sensor_data_list)
+        writer = csv.writer(file)
+        writer.writerow(['timestamp', 'accel_x', 'accel_y', 'accel_z', 'gyro_x', 'gyro_y', 'gyro_z'])
+
+        while time.time() - start_time < duration:
+            # Read sensor data
+            accel_x, accel_y, accel_z = get_accel_data()
+            gyro_x, gyro_y, gyro_z = get_gyro_data()
+
+            # Write the data to the CSV file
+            writer.writerow([time.time(), accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z])
+
+            # Wait for 1 second before the next reading
+            time.sleep(1)
 
     print(f"Data collection complete. Saved to {csv_filename}.")
 
