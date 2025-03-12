@@ -3,34 +3,30 @@ FROM ubuntu:22.04
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    wget \
-    tar \
+    git \
     build-essential \
+    cmake \
     python3 \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# Download and install the Data Modelling Tools (DMT)
-WORKDIR /opt
-RUN wget https://download.tuxfamily.org/taste/DMT/DMT-latest.tgz && \
-    tar zxvf DMT-latest.tgz && \
-    rm DMT-latest.tgz
+# Clone the ASN1SCC repository
+RUN git clone https://github.com/esa/asn1scc.git /opt/asn1scc
 
-# Set up DMT environment variables
-ENV DMT_HOME /opt/DMT
-ENV PATH="${DMT_HOME}/tools/asn1scc.3:${PATH}"
+# Build ASN1SCC
+WORKDIR /opt/asn1scc
+RUN mkdir build && cd build && cmake .. && make
 
-# Install Python dependencies
-RUN pip3 install asn1tools
+# Set up the runtime environment
+ENV PATH="/opt/asn1scc/build:${PATH}"
 
-# Copy your project files into the container
+# Create a wrapper script for running ASN1SCC inside the container
+RUN echo '#!/bin/bash' > /opt/asn1scc/asn1-docker.sh && \
+    echo 'docker run --rm -v "$(pwd):/workspace" -w /workspace asn1scc-runtime asn1.exe "$@"' >> /opt/asn1scc/asn1-docker.sh && \
+    chmod +x /opt/asn1scc/asn1-docker.sh
+
+# Set the working directory
 WORKDIR /workspace
-COPY . .
 
-# Compile ASN.1 schemas and run tests
-RUN asn1.exe -c -uPER data/sensor_data.asn && \
-    gcc -c -I . *.c && \
-    echo "ASN.1 compilation and C code generation completed successfully."
-
-# Set the default command to run your tests
-CMD ["python3", "scripts/run_tests.py"]
+# Default command
+CMD ["/bin/bash"]
