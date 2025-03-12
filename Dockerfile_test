@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     cmake \
     python3 \
     python3-pip \
+    mono-complete \  # ASN1SCC requires Mono for C# support
     && rm -rf /var/lib/apt/lists/*
 
 # Clone the ASN1SCC repository
@@ -15,10 +16,11 @@ RUN git clone https://github.com/esa/asn1scc.git /opt/asn1scc
 
 # Build ASN1SCC
 WORKDIR /opt/asn1scc
-RUN mkdir build && cd build && cmake .. && make
+RUN git submodule update --init --recursive && \
+    make
 
 # Set up the runtime environment
-ENV PATH="/opt/asn1scc/build:${PATH}"
+ENV PATH="/opt/asn1scc/bin:${PATH}"
 
 # Create a wrapper script for running ASN1SCC inside the container
 RUN echo '#!/bin/bash' > /opt/asn1scc/asn1-docker.sh && \
